@@ -8,13 +8,15 @@ const Navbar = () => {
 
   return (
     <NavContainer>
-      <Logo>
-        <img src="/logo.png" alt="CareConnect" />
-      </Logo>
+      <NavContent>
+        <Logo>
+          <img src="/logo.png" alt="CareConnect" />
+        </Logo>
 
-      <Hamburger onClick={() => setMenuOpen(!menuOpen)}>
-        {menuOpen ? <FaTimes /> : <FaBars />}
-      </Hamburger>
+        <Hamburger onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </Hamburger>
+      </NavContent>
 
       <NavMenu className={menuOpen ? "open" : ""}>
         <NavItem>
@@ -36,17 +38,28 @@ const Navbar = () => {
 
 export default Navbar;
 
-// 🔹 Styled Components
+// Styled Components
 const NavContainer = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   background: #6bc7d3;
   padding: 10px 20px;
-  position: fixed;
   width: 100%;
+  position: absolute;
   top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   z-index: 1000;
+`;
+
+const NavContent = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const Logo = styled.div`
@@ -70,6 +83,7 @@ const NavMenu = styled.ul`
   background: #6bc7d3;
   padding-top: 60px;
   transition: 0.3s;
+  z-index: 1000;
 
   &.open {
     left: 0;
