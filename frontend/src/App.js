@@ -5,6 +5,7 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
 import Forum from "./Pages/Forum";
+import GroupeChat from "./Pages/GroupeChat";
 import Messages from "./Pages/Messages";
 import Settings from "./Pages/Settings";
 
@@ -13,12 +14,15 @@ const App = () => {
     <Router>
       <AppWrapper>
         <MobileFrame>
-          <Navbar />
+        
+        
           <MainContent>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/forum" element={<Forum />} />
               <Route path="/messages" element={<Messages />} />
+              <Route path="/group-chat" element={<GroupeChat />} />
+
               <Route path="/settings" element={<Settings />} />
             </Routes>
           </MainContent>

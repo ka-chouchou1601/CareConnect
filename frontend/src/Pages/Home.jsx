@@ -1,10 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../Components/Navbar";
 import styled from "styled-components";
 
 const Home = () => {
   return (
     <AppContainer>
+      <Navbar />
       <Header>
         <h4>Vivez en meilleure santé</h4>
         <SearchBar placeholder="🔍 Rechercher" />

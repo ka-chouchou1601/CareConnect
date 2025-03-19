@@ -13,21 +13,23 @@ const Footer = () => {
         </Link>
       </FooterItem>
       <FooterItem>
-        <Link to="/members">
+        <Link to="/forum">
+          {" "}
+          {/* ✅ Link to Forum Page */}
           <FaUsers />
-          <span>Membres</span>
-        </Link>
-      </FooterItem>
-      <FooterItem>
-        <Link to="/groups">
-          <FaComments />
           <span>Groupes</span>
         </Link>
       </FooterItem>
       <FooterItem>
-        <Link to="/messages">
+        <Link to="/chatbot">
+          <FaComments />
+          <span>Chatbot</span>
+        </Link>
+      </FooterItem>
+      <FooterItem>
+        <Link to="/settings">
           <FaCog />
-          <span>Messages</span>
+          <span>Paramètre</span>
         </Link>
       </FooterItem>
     </FooterContainer>
@@ -36,12 +38,12 @@ const Footer = () => {
 
 export default Footer;
 
-// Styled Components
+// ✅ Styled Components (No change needed)
 const FooterContainer = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 70px; /* ✅ Adjusted height */
+  height: 70px;
   background-color: white;
   display: flex;
   justify-content: space-around;
@@ -49,7 +51,6 @@ const FooterContainer = styled.div`
   border-top: 1px solid #ddd;
   padding: 10px 0;
 `;
-
 
 const FooterItem = styled.div`
   text-align: center;
@@ -62,8 +63,6 @@ const FooterItem = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
-   
   }
 
   span {
