@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <AppContainer>
       <Header>
-        <h8>Vivez en meilleure santé</h8>
+        <h4>Vivez en meilleure santé</h4>
         <SearchBar placeholder="🔍 Rechercher" />
       </Header>
 
@@ -75,10 +75,10 @@ const AppContainer = styled.div`
 
 const Header = styled.div`
   width: 100%;
-  padding: 90px 100px;
+  padding: 70px 40px;
   color: white;
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
 
   /* ✅ Smooth Doctolib-like Gradient */
@@ -88,7 +88,8 @@ const Header = styled.div`
 `;
 
 const SearchBar = styled.input`
-  width: 85%;
+  width: 95%;
+  height: 10%;
   padding: 10px;
   border-radius: 25px;
   border: none;
@@ -159,7 +160,7 @@ const GroupImage = styled.img`
 `;
 
 const JoinButton = styled.button`
-  background: #008aff;
+  background: #78cdd7;
   color: white;
   padding: 6px;
   border: none;
@@ -167,8 +168,14 @@ const JoinButton = styled.button`
   cursor: pointer;
   width: 80px;
   font-size: 12px;
+
   &:hover {
-    background: #0070e0;
+    background: linear-gradient(
+      150deg,
+      #007be6,
+      #00baff,
+      #e5a62b
+    ); /* ✅ New Hover Effect */
   }
 `;
 
@@ -204,7 +211,13 @@ const ReadMoreButton = styled.button`
   cursor: pointer;
   width: 100%;
   font-size: 12px;
+
   &:hover {
-    background: #5abdc4;
+    background: linear-gradient(
+      150deg,
+      #007be6,
+      #00baff,
+      #e5a62b
+    ); /* ✅ New Hover Effect */
   }
 `;
