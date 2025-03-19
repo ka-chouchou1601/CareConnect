@@ -5,46 +5,49 @@ import styled from "styled-components";
 const Home = () => {
   return (
     <AppContainer>
-      {/* Forum Section with Background */}
+      <Header>
+        <h8>Vivez en meilleure santé</h8>
+        <SearchBar placeholder="🔍 Rechercher" />
+      </Header>
+
       <ForumSection>
-        <ForumBackground>
-          <ForumContent>
-            <h3>Popular Support Groups</h3>
-            <ForumArrow to="/forum">➡</ForumArrow>
-          </ForumContent>
-        </ForumBackground>
+        <GroupSlider>
+          <GroupCard>
+            <GroupText>
+              <h6>Cancer Support</h6>
+              <p>Connect with others fighting cancer.</p>
+              <JoinButton>Join</JoinButton>
+            </GroupText>
+            <GroupImage src="/images/cancer-support.svg" alt="Cancer Support" />
+          </GroupCard>
+
+          <GroupCard>
+            <GroupText>
+              <h6>Diabetes Support</h6>
+              <p>Manage and share diabetes experiences.</p>
+              <JoinButton>Join</JoinButton>
+            </GroupText>
+            <GroupImage
+              src="/images/diabetes-support.svg"
+              alt="Diabetes Support"
+            />
+          </GroupCard>
+        </GroupSlider>
       </ForumSection>
 
-      {/* Support Groups - Cancer & Diabetes */}
-      <GroupSlider>
-        <GroupCard>
-          <GroupImage src="/cancer-support.png" alt="Cancer Support" />
-          <h4>Cancer Support</h4>
-          <p>Connect with others fighting cancer.</p>
-          <JoinButton>Join</JoinButton>
-        </GroupCard>
-        <GroupCard>
-          <GroupImage src="/diabetes-support.png" alt="Diabetes Support" />
-          <h4>Diabetes Support</h4>
-          <p>Manage and share diabetes experiences.</p>
-          <JoinButton>Join</JoinButton>
-        </GroupCard>
-      </GroupSlider>
-
-      {/* Health Tips Section */}
       <TipSection>
-        <TipImage src="/health-tip1.png" alt="Health Tip" />
+        <TipImage src="/images/health-tip1.svg" alt="Health Tip" />
         <TipContent>
-          <h4>Health tips from doctors</h4>
+          <h6>Health tips from doctors</h6>
           <p>Discover expert advice to improve your well-being.</p>
           <ReadMoreButton>Read More</ReadMoreButton>
         </TipContent>
       </TipSection>
 
       <TipSection>
-        <TipImage src="/health-tip2.png" alt="Another Health Tip" />
+        <TipImage src="/images/health-tip2.svg" alt="Another Health Tip" />
         <TipContent>
-          <h4>Nutrition Advice</h4>
+          <h6>Nutrition Advice</h6>
           <p>Learn about healthy eating habits for better health.</p>
           <ReadMoreButton>Read More</ReadMoreButton>
         </TipContent>
@@ -55,124 +58,152 @@ const Home = () => {
 
 export default Home;
 
-// Styled Components
+// ✅ **Styled Components**
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px;
   text-align: center;
-  background: #f8f9fa;
+  background: white;
   height: 860px;
-  width: 450px;
-  border-radius: 25px;
-  border: 5px;
+  width: 314px;
+  border-radius: 40px;
+  max-width: 100vw;
   overflow: hidden;
   position: relative;
 `;
 
-const ForumSection = styled.div`
+const Header = styled.div`
   width: 100%;
-  position: relative;
-`;
-
-const ForumBackground = styled.div`
-  background: url("/forum-background.jpg") no-repeat center center;
-  background-size: cover;
-  width: 100%;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  border-radius: 8px;
-`;
-
-const ForumContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  padding: 90px 100px;
   color: white;
+  text-align: center;
+  font-size: 16px;
   font-weight: bold;
-  padding: 8px 12px;
+
+  /* ✅ Smooth Doctolib-like Gradient */
+  background: linear-gradient(150deg, #008aff, #00c6ff, #f6b93b);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
 `;
 
-const ForumArrow = styled(Link)`
-  font-size: 24px;
-  color: #45b8ac;
-  text-decoration: none;
-  font-weight: bold;
+const SearchBar = styled.input`
+  width: 85%;
+  padding: 10px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const ForumSection = styled.div`
+  position: relative;
+  width: 100%;
+  margin-top: -40px; /* ✅ Moves cards closer to gradient */
 `;
 
 const GroupSlider = styled.div`
   display: flex;
-  gap: 8px;
-  padding: 8px;
+  gap: 10px;
   width: 100%;
   overflow-x: auto;
+  padding: 10px;
+  scroll-behavior: smooth;
+
+  /* ✅ Hide scrollbar but keep scrolling */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const GroupCard = styled.div`
+  display: flex;
+  align-items: center;
   background: white;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  min-width: 170px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 14px;
+  border-radius: 18px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.12);
+  min-width: 260px;
+  height: 85px;
+  font-size: 12px;
+  justify-content: space-between;
+  flex-shrink: 0;
+`;
+
+const GroupText = styled.div`
+  flex: 1;
+  text-align: left;
+  padding-right: 10px;
+
+  h6 {
+    font-size: 15px;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 11px;
+    margin: 4px 0;
+    color: #666;
+  }
 `;
 
 const GroupImage = styled.img`
-  width: 100%;
-  height: 85px;
+  width: 55px;
+  height: 55px;
   border-radius: 8px;
 `;
 
 const JoinButton = styled.button`
-  background: #45b8ac;
+  background: #008aff;
   color: white;
-  padding: 7px;
+  padding: 6px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  width: 100%;
-  font-size: 14px;
+  width: 80px;
+  font-size: 12px;
   &:hover {
-    background: #37877d;
+    background: #0070e0;
   }
 `;
 
 const TipSection = styled.div`
   display: flex;
   background: white;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 12px;
   margin-top: 12px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
   width: 100%;
+  font-size: 12px;
 `;
 
 const TipImage = styled.img`
-  width: 85px;
+  width: 70px;
   border-radius: 8px;
 `;
 
 const TipContent = styled.div`
   flex: 1;
-  padding-left: 8px;
+  padding-left: 6px;
   text-align: left;
-  font-size: 14px;
+  font-size: 12px;
 `;
 
 const ReadMoreButton = styled.button`
   background: #78cdd7;
   color: white;
-  padding: 7px;
+  padding: 6px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   width: 100%;
-  font-size: 14px;
+  font-size: 12px;
   &:hover {
     background: #5abdc4;
   }

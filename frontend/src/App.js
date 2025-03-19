@@ -42,11 +42,14 @@ const AppWrapper = styled.div`
 `;
 
 const MobileFrame = styled.div`
-  width: 358px; /* Standard mobile width */
-  height: 700px; /* Standard mobile height */
+  width: 320px; /* Standard mobile width */
+  height: 680px; /* Standard mobile height */
   max-width: 100%;
+  margin: 0 auto; /* Centers the mobile frame */
   border-radius: 40px;
   border: 5px solid black;
+  max-width: 100vw; /* Prevents extra width */
+  overflow-x: hidden; /* Forces no horizontal overflow */
   overflow: hidden;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
   background-color: white;
@@ -58,6 +61,8 @@ const MobileFrame = styled.div`
 const MainContent = styled.div`
   flex: 1;
   width: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
   padding-bottom: 60px; /* Space for footer */
 `;
