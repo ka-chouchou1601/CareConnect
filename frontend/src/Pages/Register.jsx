@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+const Register = () => {
+  const [formData, setFormData] = useState({
+    name: "", // ✅ ici, on utilise "name" comme dans le backend
+    email: "",
+    password: "",
+  });
+
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,30 +21,26 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        formData
-      );
-
-      const { token, user } = res.data;
-
-      // ✅ Sauvegarde du token et éventuellement de l'utilisateur
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      alert("✅ Logged in!");
-      navigate("/forum");
+      await axios.post("http://localhost:5000/api/auth/register", formData);
+      alert("✅ Account created! You can now login.");
+      navigate("/login");
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Registration failed");
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Register</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
+        <input
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
         <input
           name="email"
           type="email"
@@ -56,10 +57,10 @@ const Login = () => {
           onChange={handleChange}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

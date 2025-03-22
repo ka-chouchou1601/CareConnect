@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-import Navbar from "./Components/Navbar";
+//import Navbar from "./Components/Navbar";
+import Register from "./Pages/Register";
+import Login from "./Pages/Login";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
 import Forum from "./Pages/Forum";
@@ -14,11 +16,11 @@ const App = () => {
     <Router>
       <AppWrapper>
         <MobileFrame>
-        
-        
           <MainContent>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/forum" element={<Forum />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/group-chat" element={<GroupeChat />} />

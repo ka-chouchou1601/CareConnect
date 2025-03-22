@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { FaBars, FaTimes } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaBars, FaTimes, FaPowerOff } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
 
   return (
     <NavContainer>
@@ -23,13 +30,19 @@ const Navbar = () => {
           <Link to="/">🏠 Accueil</Link>
         </NavItem>
         <NavItem>
-          <Link to="/forum">💬 Forum</Link>
+          <Link to="/forum">👥 Trouver votre communauté</Link>
         </NavItem>
         <NavItem>
-          <Link to="/messages">📩 Messages</Link>
+          <Link to="/health">➕ Renseignez sur votre santé</Link>
+        </NavItem>
+        <NavItem>
+          <Link to="/associations">🏢 Associations partenaires</Link>
         </NavItem>
         <NavItem>
           <Link to="/settings">⚙️ Paramètres</Link>
+        </NavItem>
+        <NavItem>
+          <LogoutButton onClick={handleLogout}>⏻ Se déconnecter</LogoutButton>
         </NavItem>
       </NavMenu>
     </NavContainer>
@@ -78,12 +91,17 @@ const NavMenu = styled.ul`
   position: fixed;
   top: 0;
   left: -100%;
-  width: 70%;
+  width: 75%;
   height: 100vh;
   background: #6bc7d3;
   padding-top: 60px;
-  transition: 0.3s;
+  transition: 0.3s ease;
   z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 20px;
 
   &.open {
     left: 0;
@@ -91,7 +109,7 @@ const NavMenu = styled.ul`
 `;
 
 const NavItem = styled.li`
-  padding: 15px;
+  padding: 16px 0;
   font-size: 18px;
   list-style: none;
 
@@ -99,5 +117,20 @@ const NavItem = styled.li`
     text-decoration: none;
     color: white;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
+`;
+
+const LogoutButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;

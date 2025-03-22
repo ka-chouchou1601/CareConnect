@@ -6,13 +6,16 @@ require("dotenv").config();
 
 const connectDB = require("./config/db");
 const Message = require("./models/Message");
-const Forum = require("./models/Forum"); // ✅ Required to get group name
+const Forum = require("./models/Forum");
+const authRoutes = require("./routes/authR"); // ✅ AUTH route
+const forumRoutes = require("./routes/forumR");
+const messageRoutes = require("./routes/messageR");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:3000", // 🔁 Change when deploying
+    origin: "http://localhost:3000", // ✅ Update when deploying
     methods: ["GET", "POST"],
   },
 });
@@ -20,22 +23,20 @@ const io = socketIO(server, {
 // ✅ Connect to MongoDB
 connectDB();
 
-// ✅ Middleware
+// ✅ Middlewares
 app.use(cors());
 app.use(express.json());
 
 // ✅ REST API Routes
-const forumRoutes = require("./routes/forumR");
-const messageRoutes = require("./routes/messageR");
-
+app.use("/api/auth", authRoutes); // 🟢 NEW: Auth routes
 app.use("/api/forums", forumRoutes);
-app.use("/api/messages", messageRoutes); // 🟢 REST route to test if needed
+app.use("/api/messages", messageRoutes);
 
 // ✅ WebSocket Logic using groupId
 io.on("connection", (socket) => {
   console.log("🟢 Client connected:", socket.id);
 
-  // 🟢 Join group room and fetch previous messages
+  // ✅ Join a group and fetch its messages
   socket.on("joinGroup", async (groupId) => {
     console.log(`📌 Joined group: ${groupId}`);
     try {
@@ -47,13 +48,12 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 🟢 Send and save new message
+  // ✅ Send and store message in DB
   socket.on("sendMessage", async (data) => {
     const { groupId, sender, text } = data;
     if (!groupId || !text || !sender) return;
 
     try {
-      // 🔍 Fetch group name from Forum
       const forum = await Forum.findById(groupId);
       if (!forum) {
         console.error("❌ Forum not found for ID:", groupId);
@@ -62,7 +62,7 @@ io.on("connection", (socket) => {
 
       const message = new Message({
         groupId,
-        groupName: forum.name, // ✅ Save group name
+        groupName: forum.name, // ✅ Store readable group name
         sender,
         text,
       });
@@ -74,13 +74,13 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 🔴 Disconnect
+  // 🔴 Handle disconnection
   socket.on("disconnect", () => {
     console.log("🔴 Client disconnected:", socket.id);
   });
 });
 
-// ✅ Start Server
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);

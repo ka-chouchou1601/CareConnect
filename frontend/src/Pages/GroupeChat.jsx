@@ -15,6 +15,10 @@ const GroupeChat = () => {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
 
+  // 🔐 Get logged in user
+  const user = JSON.parse(localStorage.getItem("user"));
+  const senderName = user?.name || "Anonymous";
+
   useEffect(() => {
     if (!groupId) {
       alert("Missing group ID — redirecting to Forum.");
@@ -22,7 +26,6 @@ const GroupeChat = () => {
       return;
     }
 
-    // 🟢 Emit groupId instead of groupName
     socket.emit("joinGroup", groupId);
 
     socket.on("previousMessages", (msgs) => {
@@ -47,9 +50,9 @@ const GroupeChat = () => {
     if (newMessage.trim() === "") return;
 
     const msg = {
-      sender: "You", // À remplacer plus tard par l'utilisateur authentifié
+      sender: senderName, // ✅ use actual logged-in user's name
       text: newMessage,
-      groupId: groupId,
+      groupId,
     };
 
     socket.emit("sendMessage", msg);
@@ -66,7 +69,7 @@ const GroupeChat = () => {
 
       <ChatMessages>
         {messages.map((msg, index) => (
-          <Message key={index} isUser={msg.sender === "You"}>
+          <Message key={index} isUser={msg.sender === senderName}>
             <strong>{msg.sender}:</strong> {msg.text}
           </Message>
         ))}
