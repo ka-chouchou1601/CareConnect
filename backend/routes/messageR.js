@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const Message = require("../models/Message");
 
-// POST - envoyer un message
+// ✅ POST - Envoyer un message par groupId
 router.post("/", async (req, res) => {
-  const { groupName, sender, text } = req.body;
+  const { groupId, sender, text } = req.body;
 
-  if (!groupName || !sender || !text) {
+  if (!groupId || !sender || !text) {
     return res.status(400).json({ message: "Tous les champs sont requis." });
   }
 
   try {
     const message = new Message({
-      groupName,
+      groupId,
       sender,
       text,
     });
@@ -25,12 +25,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET - récupérer les messages d’un groupe
-router.get("/:groupName", async (req, res) => {
-  const { groupName } = req.params;
+// ✅ GET - Récupérer les messages d’un groupe via son ID
+router.get("/:groupId", async (req, res) => {
+  const { groupId } = req.params;
 
   try {
-    const messages = await Message.find({ groupName }).sort({ timestamp: 1 });
+    const messages = await Message.find({ groupId }).sort({ timestamp: 1 });
     res.status(200).json(messages);
   } catch (err) {
     console.error("❌ Erreur lors de la récupération :", err);

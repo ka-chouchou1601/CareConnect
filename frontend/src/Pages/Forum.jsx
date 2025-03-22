@@ -26,6 +26,7 @@ const Forum = () => {
       state: {
         name: group.name,
         image: group.image,
+        groupId: group._id,
       },
     });
   };

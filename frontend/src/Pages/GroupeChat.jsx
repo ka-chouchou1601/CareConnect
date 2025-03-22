@@ -1,15 +1,14 @@
-// ✅ GroupeChat.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5000"); // ⚠️ Adapt if deployed
 
 const GroupeChat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { name: groupName, image } = location.state || {};
+  const { name, image, groupId } = location.state || {};
   const defaultImage = "/images/group-placeholder.png";
 
   const [messages, setMessages] = useState([]);
@@ -17,13 +16,14 @@ const GroupeChat = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (!groupName) {
-      alert("Missing group name — redirecting to Forum.");
+    if (!groupId) {
+      alert("Missing group ID — redirecting to Forum.");
       navigate("/forum");
       return;
     }
 
-    socket.emit("joinGroup", groupName);
+    // 🟢 Emit groupId instead of groupName
+    socket.emit("joinGroup", groupId);
 
     socket.on("previousMessages", (msgs) => {
       setMessages(msgs);
@@ -37,7 +37,7 @@ const GroupeChat = () => {
       socket.off("previousMessages");
       socket.off("receiveMessage");
     };
-  }, [groupName, navigate]);
+  }, [groupId, navigate]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,9 +47,9 @@ const GroupeChat = () => {
     if (newMessage.trim() === "") return;
 
     const msg = {
-      sender: "You",
+      sender: "You", // À remplacer plus tard par l'utilisateur authentifié
       text: newMessage,
-      groupName: groupName,
+      groupId: groupId,
     };
 
     socket.emit("sendMessage", msg);
@@ -60,8 +60,8 @@ const GroupeChat = () => {
   return (
     <ChatContainer>
       <GroupHeader>
-        <GroupImage src={image || defaultImage} alt={groupName || "Group"} />
-        <h3>{groupName || "Group Chat"}</h3>
+        <GroupImage src={image || defaultImage} alt={name || "Group"} />
+        <h3>{name || "Group Chat"}</h3>
       </GroupHeader>
 
       <ChatMessages>
@@ -88,6 +88,7 @@ const GroupeChat = () => {
 
 export default GroupeChat;
 
+// ✅ Styled Components
 const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,6 +96,7 @@ const ChatContainer = styled.div`
   background: #f8f9fa;
   padding: 10px;
 `;
+
 const GroupHeader = styled.div`
   display: flex;
   align-items: center;
@@ -104,17 +106,20 @@ const GroupHeader = styled.div`
   border-radius: 8px;
   margin-bottom: 10px;
 `;
+
 const GroupImage = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
 `;
+
 const ChatMessages = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 10px;
 `;
+
 const Message = styled.div`
   background: ${(props) => (props.isUser ? "#008aff" : "white")};
   color: ${(props) => (props.isUser ? "white" : "black")};
@@ -124,6 +129,7 @@ const Message = styled.div`
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
 `;
+
 const MessageInput = styled.div`
   display: flex;
   background: white;
@@ -131,6 +137,7 @@ const MessageInput = styled.div`
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 `;
+
 const Input = styled.input`
   flex: 1;
   border: none;
@@ -138,6 +145,7 @@ const Input = styled.input`
   padding: 8px;
   font-size: 14px;
 `;
+
 const SendButton = styled.button`
   background: #008aff;
   color: white;
