@@ -26,6 +26,7 @@ const GroupeChat = () => {
       return;
     }
 
+    // 🟢 Emit groupId instead of groupName
     socket.emit("joinGroup", groupId);
 
     socket.on("previousMessages", (msgs) => {
@@ -50,7 +51,7 @@ const GroupeChat = () => {
     if (newMessage.trim() === "") return;
 
     const msg = {
-      sender: senderName, // ✅ use actual logged-in user's name
+      sender: senderName,
       text: newMessage,
       groupId,
     };
@@ -158,3 +159,4 @@ const SendButton = styled.button`
   cursor: pointer;
   margin-left: 10px;
 `;
+

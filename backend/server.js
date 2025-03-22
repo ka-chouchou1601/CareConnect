@@ -7,10 +7,11 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const Message = require("./models/Message");
 const Forum = require("./models/Forum");
+
 const authRoutes = require("./routes/authR");
 const forumRoutes = require("./routes/forumR");
 const messageRoutes = require("./routes/messageR");
-const chatbotRoutes = require("./routes/chatbotR"); // ✅ NEW: Chatbot route
+const chatbotRoutes = require("./routes/chatbotR"); // ✅ Chatbot route
 
 const app = express();
 const server = http.createServer(app);
@@ -32,12 +33,13 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/forums", forumRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/chatbot", chatbotRoutes); // ✅ Add chatbot route
+app.use("/api/chatbot", chatbotRoutes); // ✅ Chatbot route
 
 // ✅ WebSocket Logic using groupId
 io.on("connection", (socket) => {
   console.log("🟢 Client connected:", socket.id);
 
+  // 🟢 Join group room and fetch previous messages
   socket.on("joinGroup", async (groupId) => {
     console.log(`📌 Joined group: ${groupId}`);
     try {
@@ -49,6 +51,7 @@ io.on("connection", (socket) => {
     }
   });
 
+  // 🟢 Send and save new message
   socket.on("sendMessage", async (data) => {
     const { groupId, sender, text } = data;
     if (!groupId || !text || !sender) return;
@@ -74,12 +77,13 @@ io.on("connection", (socket) => {
     }
   });
 
+  // 🔴 Disconnect
   socket.on("disconnect", () => {
     console.log("🔴 Client disconnected:", socket.id);
   });
 });
 
-// ✅ Start server
+// ✅ Start Server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
