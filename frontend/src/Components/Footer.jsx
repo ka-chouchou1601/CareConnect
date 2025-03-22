@@ -14,10 +14,8 @@ const Footer = () => {
       </FooterItem>
       <FooterItem>
         <Link to="/forum">
-          {" "}
-          {/* ✅ Link to Forum Page */}
           <FaUsers />
-          <span>Groupes</span>
+          <span>Trouver votre communauté</span> {/* ✅ Updated label */}
         </Link>
       </FooterItem>
       <FooterItem>

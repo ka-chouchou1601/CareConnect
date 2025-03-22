@@ -10,6 +10,7 @@ import Forum from "./Pages/Forum";
 import GroupeChat from "./Pages/GroupeChat";
 import Messages from "./Pages/Messages";
 import Settings from "./Pages/Settings";
+import Chatbot from "./Pages/Chatbot"; // ✅ Added chatbot
 
 const App = () => {
   return (
@@ -24,8 +25,14 @@ const App = () => {
               <Route path="/forum" element={<Forum />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/group-chat" element={<GroupeChat />} />
-
+              <Route
+                path="/group-chat/:groupId"
+                element={<GroupeChat />}
+              />{" "}
+              {/* ✅ Handle chatbot link */}
               <Route path="/settings" element={<Settings />} />
+              <Route path="/chatbot" element={<Chatbot />} />{" "}
+              {/* ✅ New route */}
             </Routes>
           </MainContent>
           <Footer />
@@ -48,14 +55,14 @@ const AppWrapper = styled.div`
 `;
 
 const MobileFrame = styled.div`
-  width: 320px; /* Standard mobile width */
-  height: 680px; /* Standard mobile height */
+  width: 320px;
+  height: 680px;
   max-width: 100%;
-  margin: 0 auto; /* Centers the mobile frame */
+  margin: 0 auto;
   border-radius: 40px;
   border: 5px solid black;
-  max-width: 100vw; /* Prevents extra width */
-  overflow-x: hidden; /* Forces no horizontal overflow */
+  max-width: 100vw;
+  overflow-x: hidden;
   overflow: hidden;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
   background-color: white;
@@ -68,7 +75,7 @@ const MainContent = styled.div`
   flex: 1;
   width: 100%;
   overflow-y: scroll;
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  padding-bottom: 60px; /* Space for footer */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 60px;
 `;

@@ -1,94 +1,99 @@
+// 📍 src/Pages/Chatbot.jsx
 import React, { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 
 const Chatbot = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const [message, setMessage] = useState("");
+  const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const sendMessage = () => {
-    if (input.trim() !== "") {
-      setMessages([...messages, { text: input, sender: "user" }]);
-      setInput("");
-      setTimeout(() => {
-        setMessages([
-          ...messages,
-          { text: input, sender: "user" },
-          { text: "I'm here to help!", sender: "bot" },
-        ]);
-      }, 1000);
+  const handleSend = async () => {
+    if (!message.trim()) return;
+
+    setLoading(true);
+    try {
+      const res = await axios.post("http://localhost:5000/api/chatbot/ask", {
+        message,
+      });
+      setResponse(res.data);
+    } catch (err) {
+      console.error("Erreur avec le chatbot:", err);
+      setResponse({ response: "Erreur serveur, réessayez plus tard." });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container>
-      <Title>CareConnect Chatbot</Title>
-      <ChatWindow>
-        {messages.map((msg, index) => (
-          <Message key={index} sender={msg.sender}>
-            {msg.text}
-          </Message>
-        ))}
-      </ChatWindow>
-      <InputContainer>
-        <ChatInput
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask something..."
+      <h2>🤖 Parlez à CareBot</h2>
+      <InputSection>
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Décrivez votre besoin de soutien..."
         />
-        <SendButton onClick={sendMessage}>Send</SendButton>
-      </InputContainer>
+        <button onClick={handleSend} disabled={loading}>
+          {loading ? "Envoi..." : "Envoyer"}
+        </button>
+      </InputSection>
+
+      {response && (
+        <ResponseSection>
+          <p>{response.response}</p>
+          {response.link && (
+            <a
+              href={response.link}
+              style={{ color: "#008aff", fontWeight: "bold" }}
+            >
+              👉 Rejoindre le groupe
+            </a>
+          )}
+        </ResponseSection>
+      )}
     </Container>
   );
 };
 
 export default Chatbot;
 
-/* Styled Components */
+// ✅ Styled Components
 const Container = styled.div`
-  padding: 20px;
-  background: #f8f9fa;
-  height: 100vh;
-`;
-
-const Title = styled.h2`
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const ChatWindow = styled.div`
-  height: 60vh;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
+  padding: 40px;
   background: white;
-  border-radius: 5px;
+  max-width: 600px;
+  margin: 80px auto;
+  border-radius: 12px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
 `;
 
-const Message = styled.p`
-  padding: 8px;
-  background: ${(props) => (props.sender === "user" ? "#007bff" : "#ccc")};
-  color: ${(props) => (props.sender === "user" ? "white" : "black")};
-  border-radius: 5px;
-  margin: 5px 0;
-`;
-
-const InputContainer = styled.div`
+const InputSection = styled.div`
   display: flex;
-  margin-top: 10px;
+  gap: 10px;
+
+  input {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    padding: 12px 18px;
+    background: #008aff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
 `;
 
-const ChatInput = styled.input`
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-`;
-
-const SendButton = styled.button`
-  padding: 10px 15px;
-  margin-left: 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
+const ResponseSection = styled.div`
+  margin-top: 20px;
+  background: #f4f4f4;
+  padding: 16px;
+  border-radius: 8px;
 `;

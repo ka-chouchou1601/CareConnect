@@ -7,9 +7,10 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const Message = require("./models/Message");
 const Forum = require("./models/Forum");
-const authRoutes = require("./routes/authR"); // ✅ AUTH route
+const authRoutes = require("./routes/authR");
 const forumRoutes = require("./routes/forumR");
 const messageRoutes = require("./routes/messageR");
+const chatbotRoutes = require("./routes/chatbotR"); // ✅ NEW: Chatbot route
 
 const app = express();
 const server = http.createServer(app);
@@ -28,15 +29,15 @@ app.use(cors());
 app.use(express.json());
 
 // ✅ REST API Routes
-app.use("/api/auth", authRoutes); // 🟢 NEW: Auth routes
+app.use("/api/auth", authRoutes);
 app.use("/api/forums", forumRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/chatbot", chatbotRoutes); // ✅ Add chatbot route
 
 // ✅ WebSocket Logic using groupId
 io.on("connection", (socket) => {
   console.log("🟢 Client connected:", socket.id);
 
-  // ✅ Join a group and fetch its messages
   socket.on("joinGroup", async (groupId) => {
     console.log(`📌 Joined group: ${groupId}`);
     try {
@@ -48,7 +49,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // ✅ Send and store message in DB
   socket.on("sendMessage", async (data) => {
     const { groupId, sender, text } = data;
     if (!groupId || !text || !sender) return;
@@ -62,7 +62,7 @@ io.on("connection", (socket) => {
 
       const message = new Message({
         groupId,
-        groupName: forum.name, // ✅ Store readable group name
+        groupName: forum.name,
         sender,
         text,
       });
@@ -74,7 +74,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 🔴 Handle disconnection
   socket.on("disconnect", () => {
     console.log("🔴 Client disconnected:", socket.id);
   });
