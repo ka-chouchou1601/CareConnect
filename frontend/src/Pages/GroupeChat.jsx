@@ -1,52 +1,78 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+// ✅ GroupeChat.jsx
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { io } from "socket.io-client";
 
+const socket = io("http://localhost:5000");
 
 const GroupeChat = () => {
   const location = useLocation();
-  const { name, image } = location.state || {};
-
-  // ✅ Default placeholder image if no image is provided
+  const navigate = useNavigate();
+  const { name: groupName, image } = location.state || {};
   const defaultImage = "/images/group-placeholder.png";
 
-  // ✅ Store messages in state
-  const [messages, setMessages] = useState([
-    { sender: "Alice", text: "Hey everyone! How are you?" },
-    { sender: "Bob", text: "Hi Alice! I'm doing well, how about you?" },
-  ]);
-
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const messagesEndRef = useRef(null);
 
-  // ✅ Handle sending messages
+  useEffect(() => {
+    if (!groupName) {
+      alert("Missing group name — redirecting to Forum.");
+      navigate("/forum");
+      return;
+    }
+
+    socket.emit("joinGroup", groupName);
+
+    socket.on("previousMessages", (msgs) => {
+      setMessages(msgs);
+    });
+
+    socket.on("receiveMessage", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      socket.off("previousMessages");
+      socket.off("receiveMessage");
+    };
+  }, [groupName, navigate]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = () => {
     if (newMessage.trim() === "") return;
 
-    const messageObject = { sender: "You", text: newMessage };
-    setMessages([...messages, messageObject]); // Update messages list
-    setNewMessage(""); // Clear input field
+    const msg = {
+      sender: "You",
+      text: newMessage,
+      groupName: groupName,
+    };
 
-    // Later, this will send the message to the backend (Socket.IO)
+    socket.emit("sendMessage", msg);
+    setMessages((prev) => [...prev, msg]);
+    setNewMessage("");
   };
 
   return (
     <ChatContainer>
-      {/* ✅ Display Group Name and Image */}
       <GroupHeader>
-        <GroupImage src={image || defaultImage} alt={name || "Group"} />
-        <h3>{name || "Group Chat"}</h3>
+        <GroupImage src={image || defaultImage} alt={groupName || "Group"} />
+        <h3>{groupName || "Group Chat"}</h3>
       </GroupHeader>
 
-      {/* ✅ Chat Messages */}
       <ChatMessages>
         {messages.map((msg, index) => (
           <Message key={index} isUser={msg.sender === "You"}>
             <strong>{msg.sender}:</strong> {msg.text}
           </Message>
         ))}
+        <div ref={messagesEndRef} />
       </ChatMessages>
 
-      {/* ✅ Message Input */}
       <MessageInput>
         <Input
           type="text"
@@ -62,7 +88,6 @@ const GroupeChat = () => {
 
 export default GroupeChat;
 
-// ✅ Styled Components
 const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -70,7 +95,6 @@ const ChatContainer = styled.div`
   background: #f8f9fa;
   padding: 10px;
 `;
-
 const GroupHeader = styled.div`
   display: flex;
   align-items: center;
@@ -80,20 +104,17 @@ const GroupHeader = styled.div`
   border-radius: 8px;
   margin-bottom: 10px;
 `;
-
 const GroupImage = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
 `;
-
 const ChatMessages = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 10px;
 `;
-
 const Message = styled.div`
   background: ${(props) => (props.isUser ? "#008aff" : "white")};
   color: ${(props) => (props.isUser ? "white" : "black")};
@@ -103,7 +124,6 @@ const Message = styled.div`
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
 `;
-
 const MessageInput = styled.div`
   display: flex;
   background: white;
@@ -111,7 +131,6 @@ const MessageInput = styled.div`
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 `;
-
 const Input = styled.input`
   flex: 1;
   border: none;
@@ -119,7 +138,6 @@ const Input = styled.input`
   padding: 8px;
   font-size: 14px;
 `;
-
 const SendButton = styled.button`
   background: #008aff;
   color: white;
