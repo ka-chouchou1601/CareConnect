@@ -22,7 +22,7 @@ const Forum = () => {
   }, []);
 
   const navigateToGroup = (group) => {
-    navigate("/group-chat", {
+    navigate("/group-chat/${group._id}", {
       state: {
         name: group.name,
         image: group.image,

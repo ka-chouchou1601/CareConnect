@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-//import Navbar from "./Components/Navbar";
+
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import Footer from "./Components/Footer";
@@ -10,7 +10,7 @@ import Forum from "./Pages/Forum";
 import GroupeChat from "./Pages/GroupeChat";
 import Messages from "./Pages/Messages";
 import Settings from "./Pages/Settings";
-import Chatbot from "./Pages/Chatbot"; // ✅ Added chatbot
+import Chatbot from "./Pages/Chatbot"; // ✅ Chatbot route
 
 const App = () => {
   return (
@@ -24,15 +24,10 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/forum" element={<Forum />} />
               <Route path="/messages" element={<Messages />} />
-              <Route path="/group-chat" element={<GroupeChat />} />
-              <Route
-                path="/group-chat/:groupId"
-                element={<GroupeChat />}
-              />{" "}
-              {/* ✅ Handle chatbot link */}
+              <Route path="/group-chat/:id" element={<GroupeChat />} />{" "}
+              {/* ✅ Single dynamic route */}
               <Route path="/settings" element={<Settings />} />
-              <Route path="/chatbot" element={<Chatbot />} />{" "}
-              {/* ✅ New route */}
+              <Route path="/chatbot" element={<Chatbot />} /> {/* ✅ Chatbot */}
             </Routes>
           </MainContent>
           <Footer />

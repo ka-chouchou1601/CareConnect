@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Forum = require("../models/Forum"); // ✅ Forum model pour récupérer l'ID MongoDB
+const Forum = require("../models/Forum");
 
-// ✅ Groupe simulé sans appel à OpenAI
+// ✅ Simulated chatbot logic (no OpenAI here)
 router.post("/ask", async (req, res) => {
   const { message } = req.body;
 
@@ -24,6 +24,7 @@ router.post("/ask", async (req, res) => {
           response:
             "🙏 Merci pour votre message. Aucun groupe trouvé, mais nous sommes là pour vous aider.",
           group: null,
+          groupId: null,
           link: null,
         });
       }
@@ -31,8 +32,9 @@ router.post("/ask", async (req, res) => {
       const link = `http://localhost:3000/group-chat/${forum._id}`;
 
       return res.json({
-        response: `❤️ Merci pour votre message. Vous n'êtes pas seul. Nous vous invitons à rejoindre notre groupe de soutien **"${forum.name}"**. Cliquez ici pour y accéder : ${link}`,
+        response: `❤️ Merci pour votre message. Vous n'êtes pas seul. Nous vous invitons à rejoindre notre groupe de soutien **${forum.name}**.`,
         group: forum.name,
+        groupId: forum._id,
         link,
       });
     }
@@ -41,6 +43,7 @@ router.post("/ask", async (req, res) => {
       response:
         "🙏 Merci pour votre message. Nous n'avons pas identifié de groupe correspondant, mais nous sommes là pour vous soutenir.",
       group: null,
+      groupId: null,
       link: null,
     });
   } catch (error) {
