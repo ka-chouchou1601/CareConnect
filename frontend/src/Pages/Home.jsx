@@ -1,15 +1,81 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import styled from "styled-components";
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const navigate = useNavigate();
+
+  const handleSearch = async (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      redirectToGroup(searchQuery);
+    }
+  };
+
+  const redirectToGroup = async (keyword) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/chatbot/ask", {
+        message: keyword,
+      });
+
+      const { group, groupId } = res.data;
+
+      if (group && groupId) {
+        navigate(`/group-chat/${groupId}`, {
+          state: {
+            name: group,
+            image: "/images/group-placeholder.png",
+            groupId,
+          },
+        });
+        setSearchQuery("");
+        setSuggestions([]);
+      } else {
+        alert("Aucun groupe trouvé.");
+      }
+    } catch (err) {
+      console.error("Erreur lors de la redirection vers le groupe :", err);
+    }
+  };
+
+  const handleJoinGroup = (groupKeyword) => {
+    redirectToGroup(groupKeyword);
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (searchQuery.trim()) {
+        setSuggestions([searchQuery]);
+      } else {
+        setSuggestions([]);
+      }
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
+
   return (
     <AppContainer>
       <Navbar />
       <Header>
         <h4>Vivez en meilleure santé</h4>
-        <SearchBar placeholder="🔍 Rechercher" />
+        <SearchBar
+          placeholder="🔍 Rechercher"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearch}
+        />
+        {suggestions.length > 0 && (
+          <SuggestionsContainer>
+            {suggestions.map((text, index) => (
+              <SuggestionItem key={index} onClick={() => redirectToGroup(text)}>
+                {text}
+              </SuggestionItem>
+            ))}
+          </SuggestionsContainer>
+        )}
       </Header>
 
       <ForumSection>
@@ -18,7 +84,9 @@ const Home = () => {
             <GroupText>
               <h6>Cancer Support</h6>
               <p>Connect with others fighting cancer.</p>
-              <JoinButton>Join</JoinButton>
+              <JoinButton onClick={() => handleJoinGroup("cancer")}>
+                Join
+              </JoinButton>
             </GroupText>
             <GroupImage src="/images/cancer-support.svg" alt="Cancer Support" />
           </GroupCard>
@@ -27,7 +95,9 @@ const Home = () => {
             <GroupText>
               <h6>Diabetes Support</h6>
               <p>Manage and share diabetes experiences.</p>
-              <JoinButton>Join</JoinButton>
+              <JoinButton onClick={() => handleJoinGroup("diabetes")}>
+                Join
+              </JoinButton>
             </GroupText>
             <GroupImage
               src="/images/diabetes-support.svg"
@@ -60,7 +130,7 @@ const Home = () => {
 
 export default Home;
 
-// ✅ **Styled Components**
+// ✅ Styled Components
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -76,14 +146,13 @@ const AppContainer = styled.div`
 `;
 
 const Header = styled.div`
+  position: relative;
   width: 100%;
   padding: 70px 40px;
   color: white;
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-
-  /* ✅ Smooth Doctolib-like Gradient */
   background: linear-gradient(150deg, #008aff, #00c6ff, #f6b93b);
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
@@ -101,10 +170,36 @@ const SearchBar = styled.input`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
+const SuggestionsContainer = styled.div`
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 90%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+`;
+
+const SuggestionItem = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  color: #333; /* ✅ visible text color */
+  background: white;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+`;
+
+
 const ForumSection = styled.div`
   position: relative;
   width: 100%;
-  margin-top: -40px; /* ✅ Moves cards closer to gradient */
+  margin-top: -40px;
 `;
 
 const GroupSlider = styled.div`
@@ -114,8 +209,6 @@ const GroupSlider = styled.div`
   overflow-x: auto;
   padding: 10px;
   scroll-behavior: smooth;
-
-  /* ✅ Hide scrollbar but keep scrolling */
   -ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -172,12 +265,7 @@ const JoinButton = styled.button`
   font-size: 12px;
 
   &:hover {
-    background: linear-gradient(
-      150deg,
-      #007be6,
-      #00baff,
-      #e5a62b
-    ); /* ✅ New Hover Effect */
+    background: linear-gradient(150deg, #007be6, #00baff, #e5a62b);
   }
 `;
 
@@ -215,11 +303,6 @@ const ReadMoreButton = styled.button`
   font-size: 12px;
 
   &:hover {
-    background: linear-gradient(
-      150deg,
-      #007be6,
-      #00baff,
-      #e5a62b
-    ); /* ✅ New Hover Effect */
+    background: linear-gradient(150deg, #007be6, #00baff, #e5a62b);
   }
 `;
