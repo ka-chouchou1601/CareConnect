@@ -21,13 +21,13 @@ const Home = () => {
         message: keyword,
       });
 
-      const { group, groupId } = res.data;
+      const { group, groupId, image } = res.data;
 
       if (group && groupId) {
         navigate(`/group-chat/${groupId}`, {
           state: {
             name: group,
-            image: "/images/group-placeholder.png",
+            image: image || "/images/group-placeholder.png",
             groupId,
           },
         });
@@ -88,7 +88,7 @@ const Home = () => {
                 Join
               </JoinButton>
             </GroupText>
-            <GroupImage src="/images/cancer-support.svg" alt="Cancer Support" />
+            <GroupImage src="/images/cancer-support.png" alt="Cancer Support" />
           </GroupCard>
 
           <GroupCard>
@@ -100,7 +100,7 @@ const Home = () => {
               </JoinButton>
             </GroupText>
             <GroupImage
-              src="/images/diabetes-support.svg"
+              src="/images/diabetes-support.png"
               alt="Diabetes Support"
             />
           </GroupCard>
@@ -108,7 +108,7 @@ const Home = () => {
       </ForumSection>
 
       <TipSection>
-        <TipImage src="/images/health-tip1.svg" alt="Health Tip" />
+        <TipImage src="/images/mental-health-support.png" alt="Health Tip" />
         <TipContent>
           <h6>Health tips from doctors</h6>
           <p>Discover expert advice to improve your well-being.</p>
@@ -117,7 +117,10 @@ const Home = () => {
       </TipSection>
 
       <TipSection>
-        <TipImage src="/images/health-tip2.svg" alt="Another Health Tip" />
+        <TipImage
+          src="/images/heart-disease-support.png"
+          alt="Nutrition Advice"
+        />
         <TipContent>
           <h6>Nutrition Advice</h6>
           <p>Learn about healthy eating habits for better health.</p>
@@ -187,14 +190,12 @@ const SuggestionItem = styled.div`
   cursor: pointer;
   font-size: 14px;
   text-align: left;
-  color: #333; /* ✅ visible text color */
-  background: white;
+  color: #333;
 
   &:hover {
     background: #f0f0f0;
   }
 `;
-
 
 const ForumSection = styled.div`
   position: relative;
@@ -282,7 +283,13 @@ const TipSection = styled.div`
 
 const TipImage = styled.img`
   width: 70px;
-  border-radius: 8px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-right: 12px;
+  background: #f1f1f1;
+  padding: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 `;
 
 const TipContent = styled.div`
