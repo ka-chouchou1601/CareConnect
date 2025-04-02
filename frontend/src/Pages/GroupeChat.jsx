@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // ⚠️ Adapt if deployed
+const socket = io("http://localhost:5000"); // ⚠️ Modifie si besoin
 
 const GroupeChat = () => {
   const location = useLocation();
@@ -15,7 +15,6 @@ const GroupeChat = () => {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
 
-  // 🔐 Get logged in user
   const user = JSON.parse(localStorage.getItem("user"));
   const senderName = user?.name || "Anonymous";
 
@@ -26,7 +25,6 @@ const GroupeChat = () => {
       return;
     }
 
-    // 🟢 Emit groupId instead of groupName
     socket.emit("joinGroup", groupId);
 
     socket.on("previousMessages", (msgs) => {
@@ -62,100 +60,139 @@ const GroupeChat = () => {
   };
 
   return (
-    <ChatContainer>
-      <GroupHeader>
+    <Wrapper>
+      <Header>
         <GroupImage src={image || defaultImage} alt={name || "Group"} />
-        <h3>{name || "Group Chat"}</h3>
-      </GroupHeader>
+        <GroupName>{name || "Group Chat"}</GroupName>
+      </Header>
 
-      <ChatMessages>
+      <MessagesArea>
         {messages.map((msg, index) => (
           <Message key={index} isUser={msg.sender === senderName}>
             <strong>{msg.sender}:</strong> {msg.text}
           </Message>
         ))}
         <div ref={messagesEndRef} />
-      </ChatMessages>
+      </MessagesArea>
 
-      <MessageInput>
-        <Input
+      <InputArea>
+        <TextInput
           type="text"
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <SendButton onClick={handleSendMessage}>Send</SendButton>
-      </MessageInput>
-    </ChatContainer>
+        <SendBtn onClick={handleSendMessage}>Send</SendBtn>
+      </InputArea>
+    </Wrapper>
   );
 };
 
 export default GroupeChat;
 
-// ✅ Styled Components
-const ChatContainer = styled.div`
+// ✅ Styled Components (tout en un)
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+  max-width: 425px;
+  margin: 0 auto;
   background: #f8f9fa;
-  padding: 10px;
+  position: relative;
 `;
 
-const GroupHeader = styled.div`
+const Header = styled.div`
+  height: 60px;
+  background: white;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
-  background: white;
-  padding: 12px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  width: 100%;
+  max-width: 310px;
+  margin: 0 auto;
+  z-index: 10;
 `;
 
 const GroupImage = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   margin-right: 10px;
 `;
 
-const ChatMessages = styled.div`
+const GroupName = styled.h3`
+  font-size: 17px;
+  margin: 0;
+`;
+
+const MessagesArea = styled.div`
   flex: 1;
+  margin-top: 70px;
+  margin-bottom: 60px;
   overflow-y: auto;
   padding: 10px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+  }
 `;
+
 
 const Message = styled.div`
   background: ${(props) => (props.isUser ? "#008aff" : "white")};
   color: ${(props) => (props.isUser ? "white" : "black")};
   padding: 10px;
+  margin-bottom: 10px;
   border-radius: 8px;
-  margin-bottom: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   align-self: ${(props) => (props.isUser ? "flex-end" : "flex-start")};
+  max-width: 85%;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08);
 `;
 
-const MessageInput = styled.div`
-  display: flex;
+const InputArea = styled.div`
+  height: 50px;
   background: white;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.06);
+  position: fixed;
+  bottom: 60px; /* juste au-dessus de ta navbar */
+  width: 310px;
+  max-width: 425px;
+  z-index: 10;
 `;
 
-const Input = styled.input`
+const TextInput = styled.input`
   flex: 1;
   border: none;
   outline: none;
-  padding: 8px;
-  font-size: 14px;
+  padding: 6px;
+  font-size: 13px;
+  border-radius: 8px;
+  background: #f1f1f1;
 `;
 
-const SendButton = styled.button`
+const SendBtn = styled.button`
   background: #008aff;
   color: white;
-  padding: 8px;
+  font-weight: bold;
+  padding: 8px 14px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  margin-left: 8px;
   cursor: pointer;
-  margin-left: 10px;
+
+  &:hover {
+    background: #006cd1;
+  }
 `;
