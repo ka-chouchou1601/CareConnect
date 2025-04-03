@@ -37,7 +37,7 @@ const Home = () => {
           // Redirection vers le chat du groupe
           state: {
             name: group,
-            image: image || "/images/group-placeholder.png", // Image par défaut si aucune image
+            image: image || "/images/heart-disease-support.png", // Image par défaut si aucune image
             groupId,
           },
         });
@@ -171,7 +171,7 @@ const AppContainer = styled.div`
 const Header = styled.div`
   position: relative;
   width: 100%;
-  padding: 70px 40px;
+  padding: 100px 40px 70px; /* 👈 plus d’espace en haut */
   color: white;
   text-align: center;
   font-size: 18px;
@@ -180,6 +180,7 @@ const Header = styled.div`
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
 `;
+
 
 const SearchBar = styled.input`
   width: 95%;

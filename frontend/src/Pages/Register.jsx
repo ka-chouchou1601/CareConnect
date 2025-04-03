@@ -1,42 +1,55 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import styled from "styled-components";
+// 📦 Importation des modules nécessaires
+import React, { useState } from "react"; // React et son hook d'état
+import axios from "axios"; // Pour faire les requêtes HTTP (inscription)
+import { useNavigate, Link } from "react-router-dom"; // Redirection + liens internes
+import styled from "styled-components"; // Pour styliser les composants
 
+// 🔐 Composant d'inscription
 const Register = () => {
+  // État pour stocker les données du formulaire (nom, email, mot de passe)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
+  // État pour gérer les erreurs (ex: email déjà utilisé)
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Pour rediriger l'utilisateur après inscription
 
+  // 🔄 Fonction appelée quand l'utilisateur tape dans un champ
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value }); // Mise à jour de formData
   };
 
+  // ✅ Fonction exécutée à l'envoi du formulaire
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault(); // Empêche le rechargement de la page
+    setError(""); // Réinitialise l'erreur
 
     try {
+      // 📤 Envoie des données d'inscription au backend
       await axios.post("http://localhost:5000/api/auth/register", formData);
+
+      // ✅ Succès : message et redirection vers la page de connexion
       alert("✅ Compte créé avec succès !");
       navigate("/login");
     } catch (err) {
+      // ❌ En cas d'erreur, on affiche un message à l'utilisateur
       setError(err.response?.data?.message || "Erreur lors de l'inscription");
     }
   };
 
+  // 📄 Rendu du formulaire d'inscription
   return (
     <AuthContainer>
       <Title>Créer un compte</Title>
       <Subtitle>Rejoins la communauté CareConnect 🧡</Subtitle>
 
+      {/* Affichage du message d’erreur s’il y en a une */}
       {error && <ErrorMsg>{error}</ErrorMsg>}
 
+      {/* Formulaire */}
       <Form onSubmit={handleSubmit}>
         <Input
           name="name"
@@ -64,6 +77,7 @@ const Register = () => {
         <Button type="submit">Créer mon compte</Button>
       </Form>
 
+      {/* Lien vers la page de connexion si l’utilisateur a déjà un compte */}
       <AltOption>
         Déjà inscrit ? <StyledLink to="/login">Se connecter</StyledLink>
       </AltOption>

@@ -40,7 +40,7 @@ const Chatbot = () => {
       navigate(`/group-chat/${response.groupId}`, {
         state: {
           name: response.group,
-          image: response.image,
+          image: response.image|| "/images/heart-disease-support.png",
           groupId: response.groupId,
         },
       });
