@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { FaHome, FaUsers, FaComments, FaCog } from "react-icons/fa";
+import { FaHome, FaUsers, FaComments, FaUser } from "react-icons/fa"; // 👈 Remplace FaCog par FaUser
 
 const Footer = () => {
   return (
@@ -15,7 +15,7 @@ const Footer = () => {
       <FooterItem>
         <Link to="/forum">
           <FaUsers />
-          <span>Groupes</span> {/* ✅ Updated label */}
+          <span>Groupes</span>
         </Link>
       </FooterItem>
       <FooterItem>
@@ -25,9 +25,11 @@ const Footer = () => {
         </Link>
       </FooterItem>
       <FooterItem>
-        <Link to="/settings">
-          <FaCog />
-          <span>Paramètre</span>
+        <Link to="/login">
+          {" "}
+          {/* 👈 redirige vers la page login */}
+          <FaUser /> {/* 👈 icône utilisateur */}
+          <span>Se connecter</span> {/* 👈 nouveau label */}
         </Link>
       </FooterItem>
     </FooterContainer>

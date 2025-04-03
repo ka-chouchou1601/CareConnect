@@ -17,7 +17,7 @@ const Navbar = () => {
     <NavContainer>
       <NavContent>
         <Logo>
-          <img src="/logo.png" alt="CareConnect" />
+          <img src="images/logo.png" alt="CareConnect" />
         </Logo>
 
         <Hamburger onClick={() => setMenuOpen(!menuOpen)}>
@@ -52,6 +52,7 @@ const Navbar = () => {
 export default Navbar;
 
 // Styled Components
+// ✅ Styled Components
 const NavContainer = styled.nav`
   background: #6bc7d3;
   padding: 10px 20px;
@@ -66,6 +67,7 @@ const NavContainer = styled.nav`
   align-items: center;
   justify-content: space-between;
   z-index: 1000;
+  max-width: 425px;
 `;
 
 const NavContent = styled.div`
@@ -76,8 +78,19 @@ const NavContent = styled.div`
 `;
 
 const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   img {
-    width: 120px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background: white;
+    padding: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    object-fit: contain;
+    margin-top: 10px;
   }
 `;
 
@@ -101,7 +114,6 @@ const NavMenu = styled.ul`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-left: 20px;
 
   &.open {
     left: 0;
@@ -109,28 +121,42 @@ const NavMenu = styled.ul`
 `;
 
 const NavItem = styled.li`
+  width: 100%;
   padding: 16px 0;
   font-size: 18px;
   list-style: none;
 
-  a {
+  a,
+  button {
     text-decoration: none;
     color: white;
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    padding-left: 20px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
   }
 `;
 
 const LogoutButton = styled.button`
-  background: none;
-  border: none;
+  text-decoration: none;
   color: white;
   font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding-left: 20px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
 `;

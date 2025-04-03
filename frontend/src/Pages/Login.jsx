@@ -4,30 +4,39 @@ import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Login = () => {
+  // État pour stocker les données du formulaire (email + password)
   const [formData, setFormData] = useState({ email: "", password: "" });
+  // État pour afficher les erreurs de connexion
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
+  const navigate = useNavigate(); // Permet de rediriger vers une autre page
+
+  // Fonction appelée quand un champ change (email ou mot de passe)
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Fonction appelée lors de la soumission du formulaire
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault(); // Empêche le rechargement de la page
+    setError(""); // Réinitialise les erreurs
 
     try {
+      // Envoie les données de connexion au backend
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         formData
       );
       const { token, user } = res.data;
 
+      // Stocke le token et les infos utilisateur dans le localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      navigate("/forum");
+      // Redirige vers la page des groupes après connexion réussie
+      navigate("/");
     } catch (err) {
+      // Affiche une erreur si la connexion échoue
       setError(err.response?.data?.message || "Échec de la connexion");
     }
   };
@@ -39,8 +48,10 @@ const Login = () => {
       </Title>
       <Subtitle>Connecte-toi pour retrouver ton groupe de soutien ✨</Subtitle>
 
+      {/* Affichage des erreurs */}
       {error && <ErrorMsg>{error}</ErrorMsg>}
 
+      {/* Formulaire de connexion */}
       <Form onSubmit={handleSubmit}>
         <Input
           name="email"
@@ -61,9 +72,10 @@ const Login = () => {
         <Button type="submit">Se connecter</Button>
       </Form>
 
+      {/* Lien vers l'inscription */}
       <AltOption>
         Première fois ici ?{" "}
-        <StyledLink to="/register">Créez votre compte </StyledLink>
+        <StyledLink to="/register">Créez votre compte</StyledLink>
       </AltOption>
     </AuthContainer>
   );

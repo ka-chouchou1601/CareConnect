@@ -1,86 +1,116 @@
+// Importation des outils React
 import React, { useEffect, useState, useRef } from "react";
+// Importation des outils de navigation (React Router)
 import { useLocation, useNavigate } from "react-router-dom";
+// Importation du système de style CSS en JS
 import styled from "styled-components";
+// Importation de Socket.IO côté client pour la communication temps réel
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // ⚠️ Modifie si besoin
+// Connexion à mon backend via WebSocket (Socket.IO)
+// ⚠️ URL à adapter si mon backend est en ligne
+const socket = io("http://localhost:5000");
 
+// Déclaration du composant principal du chat de groupe
 const GroupeChat = () => {
+  // Récupère les infos passées depuis la page précédente (nom, image, groupId)
   const location = useLocation();
   const navigate = useNavigate();
   const { name, image, groupId } = location.state || {};
   const defaultImage = "/images/group-placeholder.png";
 
+  // État local pour les messages reçus/envoyés
   const [messages, setMessages] = useState([]);
+  // État pour le message que l'utilisateur est en train d'écrire
   const [newMessage, setNewMessage] = useState("");
+  // Référence vers le bas de la zone des messages (pour scroller automatiquement)
   const messagesEndRef = useRef(null);
 
+  // Récupère le nom de l'utilisateur depuis le localStorage (s'il est connecté)
   const user = JSON.parse(localStorage.getItem("user"));
-  const senderName = user?.name || "Anonymous";
+  const senderName = user?.name || "Anonymous"; // Si pas de nom trouvé → "Anonymous"
 
+  // useEffect pour gérer la connexion au groupe dès que groupId est connu
   useEffect(() => {
     if (!groupId) {
+      // Si aucun groupId → on redirige vers la page Forum
       alert("Missing group ID — redirecting to Forum.");
       navigate("/forum");
       return;
     }
 
+    // Demande à rejoindre la room du groupe sur le serveur
     socket.emit("joinGroup", groupId);
 
+    // Réception des anciens messages du groupe
     socket.on("previousMessages", (msgs) => {
-      setMessages(msgs);
+      setMessages(msgs); // On remplit l’historique
     });
 
+    // Réception d’un nouveau message en temps réel
     socket.on("receiveMessage", (msg) => {
-      setMessages((prev) => [...prev, msg]);
+      setMessages((prev) => [...prev, msg]); // On ajoute le message à la liste
     });
 
+    // Nettoyage à la fin : on enlève les écouteurs pour éviter les doublons
     return () => {
       socket.off("previousMessages");
       socket.off("receiveMessage");
     };
-  }, [groupId, navigate]);
+  }, [groupId, navigate]); // Ce useEffect s’active si groupId ou navigate change
 
+  // useEffect pour faire défiler automatiquement les messages vers le bas
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages]); // À chaque fois que les messages changent → scroll en bas
 
+  // Fonction appelée quand on clique sur "Send"
   const handleSendMessage = () => {
-    if (newMessage.trim() === "") return;
+    if (newMessage.trim() === "") return; // Si message vide → on n'envoie rien
 
+    // Création du message à envoyer
     const msg = {
       sender: senderName,
       text: newMessage,
       groupId,
     };
 
+    // Envoi du message au serveur via Socket.IO
     socket.emit("sendMessage", msg);
+    // Mise à jour immédiate de l'affichage en local
     setMessages((prev) => [...prev, msg]);
+    // On vide le champ de saisie
     setNewMessage("");
   };
 
+  // Rendu du composant
   return (
     <Wrapper>
+      {/* En-tête avec image et nom du groupe */}
       <Header>
         <GroupImage src={image || defaultImage} alt={name || "Group"} />
         <GroupName>{name || "Group Chat"}</GroupName>
       </Header>
 
+      {/* Zone d'affichage des messages */}
       <MessagesArea>
         {messages.map((msg, index) => (
+          // Affiche chaque message, avec une couleur différente si c’est l’utilisateur
           <Message key={index} isUser={msg.sender === senderName}>
             <strong>{msg.sender}:</strong> {msg.text}
           </Message>
         ))}
+        {/* Ce div sert à scroller jusqu'en bas */}
         <div ref={messagesEndRef} />
       </MessagesArea>
 
+      {/* Zone de saisie d’un nouveau message */}
       <InputArea>
         <TextInput
           type="text"
           placeholder="Type a message..."
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={(e) => setNewMessage(e.target.value)} // On met à jour le message en temps réel
         />
         <SendBtn onClick={handleSendMessage}>Send</SendBtn>
       </InputArea>
@@ -145,7 +175,6 @@ const MessagesArea = styled.div`
     display: none; /* Chrome, Safari, Edge */
   }
 `;
-
 
 const Message = styled.div`
   background: ${(props) => (props.isUser ? "#008aff" : "white")};

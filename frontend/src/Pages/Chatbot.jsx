@@ -1,45 +1,53 @@
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import styled from "styled-components";
+import axios from "axios"; // Pour envoyer une requête HTTP au backend
+import styled from "styled-components"; // Pour styliser les composants
 import Navbar from "../Components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Pour rediriger l'utilisateur
 
 const Chatbot = () => {
+  // État pour stocker le message tapé par l'utilisateur
   const [message, setMessage] = useState("");
+  // État pour stocker la réponse du backend (chatbot)
   const [response, setResponse] = useState(null);
+  // État pour gérer l'affichage "envoi en cours"
   const [loading, setLoading] = useState(false);
+  // Référence vers le bas de la zone de chat (pour auto-scroll)
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
+  // Fonction déclenchée quand l'utilisateur clique sur "Envoyer"
   const handleSend = async () => {
-    if (!message.trim()) return;
-
-    setLoading(true);
+    if (!message.trim()) return; // Ne rien faire si message vide
+    //La méthode .trim() en JavaScript est utilisée pour supprimer les espaces au début et à la fin d’une chaîne de caractères.
+    setLoading(true); // Affiche "Envoi..." sur le bouton
     try {
+      // Envoie le message au backend via l'API chatbot
       const res = await axios.post("http://localhost:5000/api/chatbot/ask", {
-        message,
+        message, // Corps de la requête POST
       });
-      setResponse(res.data);
+      setResponse(res.data); // Stocke la réponse reçue
     } catch (err) {
       console.error("Erreur avec le chatbot:", err);
       setResponse({ response: "Erreur serveur, réessayez plus tard." });
     } finally {
-      setLoading(false);
+      setLoading(false); // Réactive le bouton
     }
   };
 
+  // Fonction appelée si l'utilisateur clique sur "Rejoindre le groupe"
   const handleJoinGroup = () => {
     if (response?.group && response?.groupId) {
       navigate(`/group-chat/${response.groupId}`, {
         state: {
           name: response.group,
-          image: "/images/group-placeholder.png",
+          image: response.image,
           groupId: response.groupId,
         },
       });
     }
   };
 
+  // Scroll automatique vers le bas quand un message est ajouté
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [response]);
@@ -48,6 +56,7 @@ const Chatbot = () => {
     <ChatWrapper>
       <Navbar />
       <ChatContainer>
+        {/* Message d'accueil */}
         <GroupHeader>
           <h6>
             🤖 Bonjour et bienvenue sur <strong>CareBot</strong> 🧡 — Dites-moi
@@ -55,10 +64,12 @@ const Chatbot = () => {
           </h6>
         </GroupHeader>
 
+        {/* Affichage des réponses du chatbot */}
         <ChatMessages>
           {response && (
             <Message isUser={false}>
               <p>{response.response}</p>
+              {/* Si un lien vers un groupe est fourni */}
               {response.link && (
                 <button onClick={handleJoinGroup} className="link-button">
                   👉 <strong>Rejoindre le groupe</strong>
@@ -69,6 +80,7 @@ const Chatbot = () => {
           <div ref={messagesEndRef} />
         </ChatMessages>
 
+        {/* Zone de saisie du message */}
         <MessageInput>
           <Input
             type="text"

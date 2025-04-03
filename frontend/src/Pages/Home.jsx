@@ -1,39 +1,51 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/Navbar";
-import styled from "styled-components";
+// Importation des hooks React et bibliothèques
+import React, { useState, useEffect } from "react"; // Hooks pour gérer l’état local et les effets secondaires
+import axios from "axios"; // Librairie pour effectuer des requêtes HTTP
+import { useNavigate } from "react-router-dom"; // Hook pour rediriger l’utilisateur vers une autre page
+import Navbar from "../Components/Navbar"; // Composant de navigation
+import styled from "styled-components"; // Utilisé pour le style, qu'on ignore ici
 
+// Composant principal de la page d’accueil
 const Home = () => {
+  // État or useState pour gérer la valeur saisie dans la barre de recherche
   const [searchQuery, setSearchQuery] = useState("");
+  // État pour afficher des suggestions sous la barre de recherche
   const [suggestions, setSuggestions] = useState([]);
+  // Hook pour rediriger l’utilisateur
   const navigate = useNavigate();
 
+  // Fonction déclenchée quand on appuie sur "Entrée" dans la barre de recherche
   const handleSearch = async (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
+      // Si on a tapé quelque chose, on lance la redirection
       redirectToGroup(searchQuery);
     }
   };
 
+  // Fonction qui envoie la requête au chatbot et redirige vers un groupe si trouvé
   const redirectToGroup = async (keyword) => {
     try {
       const res = await axios.post("http://localhost:5000/api/chatbot/ask", {
-        message: keyword,
+        message: keyword, // On envoie le mot-clé au backend
       });
 
-      const { group, groupId, image } = res.data;
+      const { group, groupId, image } = res.data; // On récupère les données du groupe depuis la réponse
 
       if (group && groupId) {
+        // Si le backend a trouvé un groupe correspondant
         navigate(`/group-chat/${groupId}`, {
+          // Redirection vers le chat du groupe
           state: {
             name: group,
-            image: image || "/images/group-placeholder.png",
+            image: image || "/images/group-placeholder.png", // Image par défaut si aucune image
             groupId,
           },
         });
+        // On vide la recherche et les suggestions
         setSearchQuery("");
         setSuggestions([]);
       } else {
+        // Si aucun groupe trouvé
         alert("Aucun groupe trouvé.");
       }
     } catch (err) {
@@ -41,21 +53,25 @@ const Home = () => {
     }
   };
 
+  // Fonction utilisée quand l'utilisateur clique sur le bouton "Join"
   const handleJoinGroup = (groupKeyword) => {
-    redirectToGroup(groupKeyword);
+    redirectToGroup(groupKeyword); // On redirige comme dans la barre de recherche
   };
 
+  // this is a hook too=>Effet déclenché à chaque fois que la valeur de searchQuery change
   useEffect(() => {
     const timeout = setTimeout(() => {
+      // Attente de 200ms avant d'afficher les suggestions
       if (searchQuery.trim()) {
-        setSuggestions([searchQuery]);
+        setSuggestions([searchQuery]); // Pour l’instant on simule avec une seule suggestion
       } else {
         setSuggestions([]);
       }
     }, 200);
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout); // Nettoyage pour éviter les effets indésirables
   }, [searchQuery]);
 
+  // Rendu de la page for styled component ou composant personalisé
   return (
     <AppContainer>
       <Navbar />
@@ -64,8 +80,8 @@ const Home = () => {
         <SearchBar
           placeholder="🔍 Rechercher"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)} // Mise à jour de la recherche
+          onKeyDown={handleSearch} // Appuie sur Entrée
         />
         {suggestions.length > 0 && (
           <SuggestionsContainer>
@@ -80,6 +96,8 @@ const Home = () => {
 
       <ForumSection>
         <GroupSlider>
+          {/* Carte pour le groupe Cancer */}
+          
           <GroupCard>
             <GroupText>
               <h6>Cancer Support</h6>
@@ -91,6 +109,7 @@ const Home = () => {
             <GroupImage src="/images/cancer-support.png" alt="Cancer Support" />
           </GroupCard>
 
+          {/* Carte pour le groupe Diabète */}
           <GroupCard>
             <GroupText>
               <h6>Diabetes Support</h6>
@@ -107,6 +126,7 @@ const Home = () => {
         </GroupSlider>
       </ForumSection>
 
+      {/* Section conseils de santé */}
       <TipSection>
         <TipImage src="/images/mental-health-support.png" alt="Health Tip" />
         <TipContent>
